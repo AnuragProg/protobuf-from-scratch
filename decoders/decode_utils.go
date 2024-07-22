@@ -9,7 +9,10 @@ import (
 )
 
 
-func parseLittleEndianVarint(stream io.Reader) (uint64, error){
+/*
+Deserializes little endian varint
+*/
+func deserializeLittleEndianVarint(stream io.Reader) (uint64, error){
 	var varint uint64
 	temp := make([]byte, 1)
 	position := 0
@@ -46,8 +49,13 @@ func parseLittleEndianVarint(stream io.Reader) (uint64, error){
 }
 
 
-func parseString(stream io.Reader) (string, error) {
-	length, err := parseLittleEndianVarint(stream)
+/*
+Deserializes binary string data
+
+Expected binary format : <little-endian-string-len><actual-string>
+*/
+func deserializeString(stream io.Reader) (string, error) {
+	length, err := deserializeLittleEndianVarint(stream)
 	if err != nil {
 		return "", err
 	}

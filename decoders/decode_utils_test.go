@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseLittleEndianVarint(t *testing.T) {
+func TestDeserializeLittleEndianVarint(t *testing.T) {
 	testData := []struct {
 		expected           uint64
 		littleEndianStream io.Reader
@@ -38,7 +38,7 @@ func TestParseLittleEndianVarint(t *testing.T) {
 	for _, data := range testData {
 		expected := data.expected
 		littleEndianStream := data.littleEndianStream
-		actual, err := parseLittleEndianVarint(littleEndianStream)
+		actual, err := deserializeLittleEndianVarint(littleEndianStream)
 		if err != nil {
 			t.Fatal(err.Error())
 		}
@@ -47,7 +47,7 @@ func TestParseLittleEndianVarint(t *testing.T) {
 	}
 }
 
-func TestParseString(t *testing.T) {
+func TestDeserializeString(t *testing.T) {
 	testData := []struct {
 		expected string
 		stream   *bytes.Reader // little endian length followed by string
@@ -66,7 +66,7 @@ func TestParseString(t *testing.T) {
 			expected: "aA0bB1cC2dD3eE4fF5gG6hH7iI8jJ9kK0lL1mM2nN3oO4pP5qQ6rR7sS8tT9uU0vV1wW2xX3yY4zZ5aA6bB7cC8dD9eE0fF1gG2hH3iI4jJ5kK6lL7mM8nN9oO0pP1qQ2rR3sS4tT5uU6vV7wW8xX9yY0zZ1aA2bB3cC4dD5eE6fF7gG8hH9iI0jJ1kK2lL3mM4nN5oO6pP7qQ8rR9sS0tT1uU2vV3wW4xX5yY6zZ7aA8bB9cC0dD1eE2fF3gG4hH5iI6jJ7kK8lL9mM0nN1oO2pP3qQ4rR5sS6tT7uU8vV9wW0xX1yY2zZ3",
 			stream: bytes.NewReader(
 				append(
-					[]byte{0b1011_1000, 0b10}, // 312
+					[]byte{0b1_011_1000, 0b0_000_0010}, // 312
 					[]byte("aA0bB1cC2dD3eE4fF5gG6hH7iI8jJ9kK0lL1mM2nN3oO4pP5qQ6rR7sS8tT9uU0vV1wW2xX3yY4zZ5aA6bB7cC8dD9eE0fF1gG2hH3iI4jJ5kK6lL7mM8nN9oO0pP1qQ2rR3sS4tT5uU6vV7wW8xX9yY0zZ1aA2bB3cC4dD5eE6fF7gG8hH9iI0jJ1kK2lL3mM4nN5oO6pP7qQ8rR9sS0tT1uU2vV3wW4xX5yY6zZ7aA8bB9cC0dD1eE2fF3gG4hH5iI6jJ7kK8lL9mM0nN1oO2pP3qQ4rR5sS6tT7uU8vV9wW0xX1yY2zZ3")...,
 				),
 			),
@@ -76,7 +76,7 @@ func TestParseString(t *testing.T) {
 	for _, data := range testData {
 		expected := data.expected
 		stream := data.stream
-		actual, err := parseString(stream)
+		actual, err := deserializeString(stream)
 		if err != nil {
 			t.Fatal(err.Error())
 		}

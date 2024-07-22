@@ -2,7 +2,7 @@
 ARG GO_VERSION=1.22.3
 
 ############################################
-FROM golang:${GO_vERSION}-alpine AS base
+FROM golang:${GO_VERSION}-alpine AS base
 
 WORKDIR /usr/app/src
 RUN apk update & apk add make

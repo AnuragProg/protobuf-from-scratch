@@ -29,7 +29,7 @@ func DecodeProjectType(stream io.Reader) (types.ProjectType, error) {
 
 	for {
 		// parse tag
-		tag, err := parseLittleEndianVarint(stream)
+		tag, err := deserializeLittleEndianVarint(stream)
 		if err == io.EOF {
 			break
 		}
@@ -44,7 +44,7 @@ func DecodeProjectType(stream io.Reader) (types.ProjectType, error) {
 		// parse respective field
 		switch wireType {
 		case types.WIRE_TYPE_STRING:
-			value, err := parseString(stream)
+			value, err := deserializeString(stream)
 			if err != nil {
 				return projectType, err
 			}
@@ -56,10 +56,10 @@ func DecodeProjectType(stream io.Reader) (types.ProjectType, error) {
 			case types.PROJECT_TYPE_TAGS_FIELD_NO:
 				projectType.Tags = append(projectType.Tags, value)
 			default:
-				return projectType, errors.New(fmt.Sprintf("invalid field no: %v", fieldNo))
+				return projectType, errors.New(fmt.Sprintf("unknown field no: %v for wire type string", fieldNo))
 			}
 		case types.WIRE_TYPE_VARINT:
-			value, err := parseLittleEndianVarint(stream)
+			value, err := deserializeLittleEndianVarint(stream)
 			if err != nil {
 				return projectType, err
 			}
@@ -67,10 +67,10 @@ func DecodeProjectType(stream io.Reader) (types.ProjectType, error) {
 			case types.PROJECT_TYPE_TIMESTAMP_FIELD_NO:
 				projectType.Timestamp = value
 			default:
-				return projectType, errors.New(fmt.Sprintf("invalid field no: %v", fieldNo))
+				return projectType, errors.New(fmt.Sprintf("unknown field no: %v for wire type varint", fieldNo))
 			}
 		default:
-			return projectType, errors.New(fmt.Sprintf("invalid wire type: %v", wireType))
+			return projectType, errors.New(fmt.Sprintf("unknown wire type: %v", wireType))
 		}
 	}
 	return projectType, nil

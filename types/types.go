@@ -12,8 +12,8 @@ const (
 )
 
 type ProjectType struct {
-	Name        string
-	Description string
-	Timestamp   uint64
-	Tags        []string
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Timestamp   uint64   `json:"timestamp"`
+	Tags        []string `json:"tags"`
 }
