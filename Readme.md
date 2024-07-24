@@ -1,6 +1,6 @@
-# Project Title
+# Description
 
-Protobuf from scratch
+Protobuf from scratch: Developed with aim to implement protocol buffers from scratch and to make it's encoding/decoding faster than that of json's with reduced payload size through the use of binary
 
 ## Features
 
@@ -32,11 +32,24 @@ Result of which is ```cpu.prof``` file which can be viewed through ```go tool pp
 
 ## Optimizations (Mistakes that led to latency spikes in encoding/decoding and their fixes)
 
+Context: We have a type name `ProjectType` with schema
+```go
+type ProjectType struct {
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Timestamp   uint64   `json:"timestamp"`
+	Tags        []string `json:"tags"`
+}
+```
+that we are serializing/deserializing using custom encoders/decoders (```encoders.*```) and ```encoding/json``` encoders/decoders
+
+*Note: methods of type ```encoders.*``` are to be focused on as they are the ones we are trying to optimize, e.g. encoders.EncodeProjectType, encoders.serializeString, etc*
+
 ### Optimization 1
 
-#### Cause: Was returning io.Reader as result of serialization of fields, resulting in continuous read/write from reader while concatenating or processing underlying bytes
+Cause: Was returning ```io.Reader``` as result of serialization of fields, resulting in frequent reads from reader anytime we need to process the underlying bytes, resulting in large allocations for new slices
 
-#### Fix: Returned []byte directly, preventing overhead of read/write to access it
+Fix: Returned ```[]byte``` directly, preventing overhead of frequent reads from the reader to access it
 
 #### Before Optimization:
 
@@ -49,11 +62,11 @@ Result of which is ```cpu.prof``` file which can be viewed through ```go tool pp
 
 ### Optimization 2
 
-#### Cause: Multiple huge allocations causing latency spikes due to mallocs, slice resizing & copying of underlying data in newly resized slice
+Cause: Multiple huge allocations causing latency spikes due to mallocs, slice resizing & copying of underlying data in newly resized slice
 
-#### Fix: Use of single buffer, and enforcing all the subsequent serializers to use it directly to push results to
+Fix: Use of single buffer, and enforcing all the subsequent serializers to use it directly to push the results to
 
-#### Before Optimization:
+#### Before Optimization (comparison with ```encoding/json```'s Marshal):
 
 ![Before Optimization](./assets/before-optimization-large-proto-encoding-latency-due-to-multiple-allocations.png)
 
