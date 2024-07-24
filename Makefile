@@ -12,3 +12,8 @@ test:
 	@echo Testing ./encoders
 	@go test -v ./encoders
 	@echo Ended tests...
+
+cover:
+	@echo Test Coverage...
+	@go test -cover ./decoders
+	@go test -cover ./encoders

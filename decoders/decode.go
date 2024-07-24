@@ -8,16 +8,16 @@ import (
 	"protobuf-from-scratch/utils"
 )
 
-func Decode(stream io.ReadCloser, _type types.Type) (interface{}, error) {
-	defer stream.Close()
-
-	switch _type {
-	case types.PROJECT_TYPE:
-		return DecodeProjectType(stream)
-	default:
-		return nil, errors.New("invalid _type")
-	}
-}
+// func Decode(stream io.ReadCloser, _type types.Type) (interface{}, error) {
+// 	defer stream.Close()
+//
+// 	switch _type {
+// 	case types.PROJECT_TYPE:
+// 		return DecodeProjectType(stream)
+// 	default:
+// 		return nil, errors.New("invalid _type")
+// 	}
+// }
 
 func DecodeProjectType(stream io.Reader) (types.ProjectType, error) {
 	projectType := types.ProjectType{

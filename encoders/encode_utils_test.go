@@ -1,7 +1,7 @@
 package encoders
 
 import (
-	"io"
+	"bytes"
 	"slices"
 	"testing"
 
@@ -40,11 +40,9 @@ func TestSerializeLittleEndianVarint(t *testing.T) {
 	}
 
 	for _, data := range testData {
-		actual, err := io.ReadAll(serializeLittleEndianVarint(data.varint))
-		if err != nil {
-			t.Fatal(err.Error())
-		}
-		assert.ElementsMatch(t, data.expected, actual)
+		actual := bytes.NewBuffer([]byte{})
+		serializeLittleEndianVarint(actual, data.varint)
+		assert.ElementsMatch(t, data.expected, actual.Bytes())
 	}
 }
 
@@ -70,10 +68,8 @@ func TestSerializeString(t *testing.T) {
 	}
 
 	for _, data := range testData{
-		actual, err := io.ReadAll(serializeString(data.stringData))
-		if err != nil {
-			t.Fatal(err.Error())
-		}
-		assert.ElementsMatch(t, data.expected, actual)
+		actual := bytes.NewBuffer([]byte{})
+		serializeString(actual, data.stringData)
+		assert.ElementsMatch(t, data.expected, actual.Bytes())
 	}
 }

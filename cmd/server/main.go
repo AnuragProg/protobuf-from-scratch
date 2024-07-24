@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -9,30 +8,41 @@ import (
 	"os"
 	"os/signal"
 	"protobuf-from-scratch/decoders"
+	"protobuf-from-scratch/encoders"
 	"protobuf-from-scratch/types"
 )
 
 func main(){
 
 	http.HandleFunc("/json", func(w http.ResponseWriter, r *http.Request) {
-		body, _ := io.ReadAll(r.Body)
 		defer r.Body.Close()
 
+		body, _ := io.ReadAll(r.Body)
+
+		// parsing the project type
 		var projectType types.ProjectType
 		json.Unmarshal(body, &projectType)
 
-		fmt.Printf("json size: %v bytes\n", len(body))
-		fmt.Printf("json data: %+v\n", projectType)
+		// mutating data 
+		projectType.Description = "changed"
+
+		// responding with mutated data
+		jsonBody, _ := json.Marshal(projectType)
+		w.Write(jsonBody)
 	})
 
 	http.HandleFunc("/proto", func(w http.ResponseWriter, r *http.Request) {
-		body, _ := io.ReadAll(r.Body)
 		defer r.Body.Close()
 
-		projectType, _ := decoders.DecodeProjectType(bytes.NewReader(body))
+		// parsing the project type
+		projectType, _ := decoders.DecodeProjectType(r.Body)
 
-		fmt.Printf("proto size: %v bytes\n", len(body))
-		fmt.Printf("proto data: %+v\n", projectType)
+		// mutating data
+		projectType.Description = "changed"
+
+		// responding with mutated data
+		protoBody := encoders.EncodeProjectType(projectType)
+		w.Write(protoBody)
 	})
 
 	done := make(chan os.Signal, 1)

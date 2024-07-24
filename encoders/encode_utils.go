@@ -2,13 +2,12 @@ package encoders
 
 import (
 	"bytes"
-	"io"
 	"protobuf-from-scratch/utils"
 )
 
-func serializeLittleEndianVarint(varint uint64) io.Reader {
-
-	varintBytes := []byte{}
+func serializeLittleEndianVarint(buffer *bytes.Buffer, varint uint64) {
+	// estimatedSize := 9 /* 8 bytes + 1*8 continuation bits */
+	// varintBytes := make([]byte, 0, estimatedSize)
 
 	for { // not going to put check here for varint != 0 as 0 could be the possible starting value for serializing
 
@@ -25,7 +24,8 @@ func serializeLittleEndianVarint(varint uint64) io.Reader {
 			currentByte |= utils.CONTINUATION_BIT
 		}
 
-		varintBytes = append(varintBytes, currentByte)
+		// varintBytes = append(varintBytes, currentByte)
+		buffer.WriteByte(currentByte)
 
 		// break if next part doesn't exist
 		if varint == 0 {
@@ -33,7 +33,6 @@ func serializeLittleEndianVarint(varint uint64) io.Reader {
 		}
 	}
 
-	return bytes.NewReader(varintBytes)
 }
 
 
@@ -42,12 +41,7 @@ Serializes binary string data
 
 Output binary format : <little-endian-string-len><actual-string>
 */
-func serializeString(data string) io.Reader {
-	length := len(data)
-	lengthStream := serializeLittleEndianVarint(uint64(length))
-	stringStream := bytes.NewReader([]byte(data))
-	return io.MultiReader(
-		lengthStream, 
-		stringStream,
-	)
+func serializeString(buffer *bytes.Buffer, data string) {
+	serializeLittleEndianVarint(buffer, uint64(len(data)))
+	buffer.WriteString(data)
 }
