@@ -68,11 +68,11 @@ Cause: Multiple huge allocations causing latency spikes due to mallocs, slice re
 
 Fix: Use of single buffer, and enforcing all the subsequent serializers to use it directly to push the results to
 
-#### Before Optimization (comparison with ```encoding/json```'s Marshal):
+#### Before Optimization (in comparison with ```encoding/json```'s Marshal):
 
 ![Before Optimization](./assets/before-optimization-large-proto-encoding-latency-due-to-multiple-allocations.png)
 
-#### After Optimization:
+#### After Optimization: (in comparison with ```encoding/json```'s Marshal)
 
 ![After Optimization](./assets/after-optimization-large-proto-encoding-latency-due-to-multiple-allocations.png)
 
