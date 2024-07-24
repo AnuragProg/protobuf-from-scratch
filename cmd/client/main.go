@@ -26,7 +26,7 @@ type Stats struct {
 func Benchmark(fun func()) int64 {
 	start := time.Now()
 	fun()
-	return time.Since(start).Nanoseconds()
+	return time.Since(start).Milliseconds()
 }
 
 func GetStats(data types.ProjectType, statsType string, concurrency uint64) (Stats, error) {
