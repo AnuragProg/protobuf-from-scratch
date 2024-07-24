@@ -78,9 +78,9 @@ Fix: Use of single buffer, and enforcing all the subsequent serializers to use i
 
 ## Conclusion
 
-    - Achieved faster encoding/decoding in comparison to ```encoding/json```
+- Achieved faster encoding/decoding in comparison to ```encoding/json```
 
-    - Achieved lesser payload size than that of json's
+- Achieved lesser payload size than that of json's
 
 *Units - ms (milliseconds)*
 
@@ -96,4 +96,4 @@ Json 10000 concurrency: {Encodingp90:4765 Encodingp95:5121 Encodingp99:6748 Deco
 Proto 10000 concurrency: {Encodingp90:260 Encodingp95:283 Encodingp99:380 Decodingp90:0 Decodingp95:0 Decodingp99:0 Size:304912}
 ```
 
-*Note - The difference in sizes is not so significant due to two reasons, 1. No. of fields were and their string representation were not that big. 2. The actual data was increased in the second case rather than the number of fields, hence giving such rate in terms of size.*
+*Note - The difference in sizes is not so significant due to two reasons, 1. No. of fields and their string representation were not that big. 2. The actual data was increased in the second case rather than the number of fields, hence giving such rate in terms of size.*
